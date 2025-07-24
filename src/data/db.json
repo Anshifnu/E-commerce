@@ -1,0 +1,244 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Amber and Woody.",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/PEGASUS_125ml_1_b4b5d813-2d72-4095-a48a-814447c41df9.png?v=1743668863&width=533",
+      "price": 120,
+      "category": "PEGASUS",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-PERFUME-125-PACK2_1X1_f763c8fa-cb5a-45bc-950d-d1004cf2818d.jpg?v=1751887756&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-PERFUME-125-PACK3-1x1.jpg?v=1751887788&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-PERFUME-125-PACK4-1x1.jpg?v=1751887788&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "2",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Citrus and Woody.",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/PERSEUS_125ml_1_2.png?v=1743668486&width=533",
+      "price": 121,
+      "category": "PERSEUS",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/PERSEUS-PERFUME-125-PACK2-1x1.jpg?v=1751885968&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PERSEUS-PERFUME-125-PACK3-1x1.jpg?v=1751885955&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PERSEUS-PERFUME-125-PACK4-1x1.jpg?v=1751885955&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "3",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Amber and Woody.",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/CARLISLE_125ml_1_fdedf997-30f9-414d-9817-9181ee0b5a71.png?v=1743663242&width=533",
+      "price": 120,
+      "category": "CARLISLE",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK3-1x1.jpg?v=1751871196&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK2-1x1.jpg?v=1751871196&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK4-1x1.jpg?v=1751871101&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "4",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Citrus,Fruity and Woody .",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/GREENLEY_125ml_1_70f5c13b-7542-4277-b8f4-988ee637088f.png?v=1743177188&width=533",
+      "price": 130,
+      "category": "GREENLEY",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK2-1x1_1.jpg?v=1751894167&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK3-1x1.jpg?v=1751894143&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK4-1x1.jpg?v=1751894144&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "5",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Citrus,Tonic and Woody .",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/SEDLEY_125ml_1_6902d0f5-1590-4326-9809-5a283acdb24f.png?v=1743670310&width=533",
+      "price": 110,
+      "category": "SEDLEY",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/SEDLEY-PERFUME-125-PACK2-1x1_2.jpg?v=1751895472&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/SEDLEY-PERFUME-125-PACK3-1X1.jpg?v=1751895398&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/SEDLEY-PERFUME-125-PACK4-1x1.jpg?v=1751895397&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "6",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Aromatic Citrus and Woody .",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/PERCIVAL_125ml_1_004966c1-0c7e-4715-bbfc-c80707fb9bd6.png?v=1743178668&width=533",
+      "price": 125,
+      "category": "PERCIVAL",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/PERCIVAL-PERFUME-125ml-PACK2_1x1_84392d6c-2c2f-4f86-b415-6b99687a1a53.jpg?v=1751886457&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PERCIVAL-PERFUME-125-PACK3-1X1.jpg?v=1751886447&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/PERCIVAL-PERFUME-125-PACK4-1x1.jpg?v=1751886447&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "7",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Amber,vanila and Woody .",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/ALTHAIR_125ml_1_f689b1e5-23d3-424b-9e5b-c5a6b31219d2.png?v=1743062490&width=533",
+      "price": 135,
+      "category": "ALTHAIR",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/ALTHAIR-PERFUME-125-PACK2_1x1_fe982585-6dab-47f2-bf3a-8042ab746ced.jpg?v=1751875139&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/ALTHAIR-PERFUME-75-PACK3-1X1jpeg.jpg?v=1751875139&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/ALTHAIR-PERFUME-125-PACK4-1x1.jpg?v=1751875139&width=823"
+      ],
+      "video": "https://parfums-de-marly.com/cdn/shop/videos/c/vp/f7194d9b3fd344f3979aa53d724ccbaa/f7194d9b3fd344f3979aa53d724ccbaa.HD-1080p-7.2Mbps-46804249.mp4?v=0"
+    },
+    {
+      "id": "8",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of  Citrus,Spicy and Woody .",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/CASTLEY-PERFUME-125-PACK1-1X1-NO_SHADOW_CENTERED.png?v=1747311474&width=533",
+      "price": 135,
+      "category": "CASTELY",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/CASTLEY-PERFUME-125-PACK2_1x1_1.jpg?v=1751896268&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/CASTLEY-PERFUME-125-PACK3-1x1.jpg?v=1751896268&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/CASTLEY-PERFUME-125-PACK4-1x1.jpg?v=1751896268&width=823"
+      ],
+      "video": "https://parfums-de-marly.com/cdn/shop/videos/c/vp/7b5fd49fb57142e9a74bb12575ad7c34/7b5fd49fb57142e9a74bb12575ad7c34.HD-1080p-7.2Mbps-46809819.mp4?v=0"
+    },
+    {
+      "id": "9",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Woody,spicy  .",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/KALAN_125ml_1_3.png?v=1743750552&width=533",
+      "price": 130,
+      "category": "KALAN",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/KALAN-PERFUME-125-PACK2-1x1.jpg?v=1751876479&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/KALAN-PERFUME-125-PACK3-1x1.jpg?v=1751876415&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/KALAN-PERFUME-125-PACK4-1x1.jpg?v=1751876415&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "10",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Aromatic,cirtus.",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/GALLOWAY_125ml_1_6d210bdf-262c-4bae-ab86-4424b7e1555a.png?v=1743176222&width=533",
+      "price": 120,
+      "category": "GALLOWAY",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/GALLOWAY-PERFUME-125-PACK2-1x1.jpg?v=1751884448&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/GALLOWAY-PERFUME-125-PACK3-1x1.jpg?v=1751884429&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/GALLOWAY-PERFUME-125-PACK4-1x1.jpg?v=1751884429&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "11",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Woody,Leather,Chypre.",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/GODOLPHIN_125ml_1_e0e6f26d-e978-47ad-87d0-260b824df886.png?v=1743669449&width=533",
+      "price": 140,
+      "category": "GODOLPHIN",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/GODOLPHIN-PERFUME-125-PACK2_1X1_44b07cc0-b602-429d-b6ee-6aa64e3a9c07.jpg?v=1753165631&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/GODOLPHIN-PERFUME-75-PACK1-1X1_CENTERED.jpg?v=1753165673&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/GODOLPHIN-PERFUME-125-PACK3-1x1.jpg?v=1753165673&width=823",
+        "https://parfums-de-marly.com/cdn/shop/files/GODOLPHIN-PERFUME-125-PACK4-1x1.jpg?v=1753165673&width=823"
+      ],
+      "video": ""
+    },
+    {
+      "id": "12",
+      "name": "MARLY PARIS",
+      "description": "A refreshing blend of Woody,Floral.",
+      "image": "https://parfums-de-marly.com/cdn/shop/files/HABDAN_125ml_1.png?v=1728463683&width=360",
+      "price": 130,
+      "category": "HABDAN",
+      "size": "100ml",
+      "gallery": [
+        "https://parfums-de-marly.com/cdn/shop/files/HABDAN_125ml_2.png?v=1728463684&width=823"
+      ],
+      "video": ""
+    }
+  ],
+  "users": [
+    {
+      "id": "dbb4",
+      "name": "amjid",
+      "email": "amjid6789@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
+      "role": "User",
+      "isBlock": false,
+      "cart": [],
+      "orders": [
+        {
+          "id": "3",
+          "name": "MARLY PARIS",
+          "description": "A refreshing blend of Amber and Woody.",
+          "image": "https://parfums-de-marly.com/cdn/shop/files/CARLISLE_125ml_1_fdedf997-30f9-414d-9817-9181ee0b5a71.png?v=1743663242&width=533",
+          "price": 120,
+          "category": "CARLISLE",
+          "size": "100ml",
+          "gallery": [
+            "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK3-1x1.jpg?v=1751871196&width=823",
+            "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK2-1x1.jpg?v=1751871196&width=823",
+            "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK4-1x1.jpg?v=1751871101&width=823"
+          ],
+          "video": "",
+          "qty": 1
+        },
+        {
+          "id": "2",
+          "name": "MARLY PARIS",
+          "description": "A refreshing blend of Citrus and Woody.",
+          "image": "https://parfums-de-marly.com/cdn/shop/files/PERSEUS_125ml_1_2.png?v=1743668486&width=533",
+          "price": 121,
+          "category": "PERSEUS",
+          "size": "100ml",
+          "gallery": [
+            "https://parfums-de-marly.com/cdn/shop/files/PERSEUS-PERFUME-125-PACK2-1x1.jpg?v=1751885968&width=823",
+            "https://parfums-de-marly.com/cdn/shop/files/PERSEUS-PERFUME-125-PACK3-1x1.jpg?v=1751885955&width=823",
+            "https://parfums-de-marly.com/cdn/shop/files/PERSEUS-PERFUME-125-PACK4-1x1.jpg?v=1751885955&width=823"
+          ],
+          "video": "",
+          "qty": 1
+        }
+      ],
+      "wishlist": [],
+      "created_at": "2025-07-24T04:32:47.921Z"
+    },
+    {
+      "id": "3829",
+      "name": "anshif",
+      "email": "anshif@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
+      "role": "User",
+      "isBlock": false,
+      "cart": [],
+      "orders": [],
+      "wishlist": [],
+      "created_at": "2025-07-24T09:59:09.292Z"
+    }
+  ]
+}
