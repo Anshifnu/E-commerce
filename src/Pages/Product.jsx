@@ -1,19 +1,33 @@
-// src/Pages/Product.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import db from '../data/db.json';
-import { FaHeart } from "react-icons/fa";
 import axios from 'axios';
+import { FaHeart } from "react-icons/fa";
 
 const Product = () => {
   const navigate = useNavigate();
-  const products = db.products;
-
+  const [products, setProducts] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState(products);
-  const [selectedBrand, setSelectedBrand] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedName, setSelectedName] = useState("");
+   const user = localStorage.getItem("user")
+    
+    useEffect(() => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.role === "Admin") {
+        navigate("/admin", { replace: true });
+      }
+    }, []);
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/products');
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Error loading products:", err);
+      }
+    };
+
     const fetchWishlist = async () => {
       const user = JSON.parse(localStorage.getItem("user"));
       if (!user) return;
@@ -28,6 +42,7 @@ const Product = () => {
       }
     };
 
+    fetchProducts();
     fetchWishlist();
   }, []);
 
@@ -62,20 +77,17 @@ const Product = () => {
     }
   };
 
-  const handleBrandFilter = (brand) => {
-    setSelectedBrand(brand);
-    if (brand === "All") {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter(
-        (product) => product.name.toLowerCase() === brand.toLowerCase()
-      );
-      setFilteredProducts(filtered);
-    }
-  };
-
   const isInWishlist = (productId) =>
     wishlist.some((item) => item.id === productId);
+
+  
+  const uniqueNames = [...new Set(products.map(p => p.name))];
+
+  
+  const filteredProducts = products.filter(product =>
+    product.category?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (selectedName === "" || product.name === selectedName)
+  );
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen pt-24">
@@ -86,60 +98,56 @@ const Product = () => {
         }}
       ></div>
 
-      <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">
-          Specify your brands
-        </h2>
-        <div className="flex justify-center gap-4 flex-wrap">
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedBrand === "All"
-                ? "bg-black text-white"
-                : "bg-white text-black border"
-            } hover:bg-yellow-200`}
-            onClick={() => handleBrandFilter("All")}
-          >
-            All
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedBrand === "marly paris"
-                ? "bg-black text-white"
-                : "bg-white text-black border"
-            } hover:bg-yellow-200`}
-            onClick={() => handleBrandFilter("marly paris")}
-          >
-            marly paris
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedBrand === "Mystikum"
-                ? "bg-black text-white"
-                : "bg-white text-black border"
-            } hover:bg-yellow-200`}
-            onClick={() => handleBrandFilter("Mystikum")}
-          >
-            Mystikum
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedBrand === "sahara"
-                ? "bg-black text-white"
-                : "bg-white text-black border"
-            } hover:bg-yellow-200`}
-            onClick={() => handleBrandFilter("sahara")}
-          >
-            sahara
-          </button>
+    
+      <div className="mb-6 flex justify-center">
+        <div className="flex items-center w-full max-w-md bg-white border border-gray-300 rounded-full px-4 py-2 shadow">
+          <span className="text-gray-600 text-sm mr-2 whitespace-nowrap">Search here:</span>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-grow bg-transparent outline-none text-gray-700 placeholder:text-gray-400"
+            placeholder="Find your product"
+          />
         </div>
       </div>
 
+     
+      <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <button
+          onClick={() => setSelectedName("")}
+          className={`px-4 py-2 rounded-full border ${
+            selectedName === ""
+              ? "bg-black text-white"
+              : "bg-white text-black hover:bg-yellow-200"
+          } transition duration-200 shadow`}
+        >
+          All
+        </button>
+
+        {uniqueNames.map((name) => (
+          <button
+            key={name}
+            onClick={() => setSelectedName(name)}
+            className={`px-4 py-2 rounded-full border ${
+              selectedName === name
+                ? "bg-black text-white"
+                : "bg-white text-black hover:bg-yellow-200"
+            } transition duration-200 shadow`}
+          >
+            {name}
+          </button>
+        ))}
+      </div>
+
+     
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {filteredProducts.map((product) => (
           <div
             key={product.id}
             className="bg-white rounded-2xl shadow-md p-4 flex flex-col relative"
           >
+            
             <button
               className="absolute top-2 right-2 text-xl"
               onClick={() => addToWishlist(product)}
@@ -154,14 +162,29 @@ const Product = () => {
               alt={product.category}
               className="w-full h-48 object-contain mb-4"
             />
+
+            
             <h2 className="text-lg font-bold text-center mb-2 text-gray-800">
               {product.category}
             </h2>
-            <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+
+            
+            <p className="text-sm text-gray-600 mb-2">{product.description}</p>
+
+            
+            <p className={`text-xs mb-2 font-medium ${
+              product.stock ? 'text-green-600' : 'text-red-500'
+            }`}>
+              {product.stock ? "In Stock" : "Out of Stock"}
+            </p>
+
+           
             <div className="flex justify-between text-sm text-gray-800 mb-4">
               <span>{product.size}</span>
               <span className="font-semibold">${product.price}</span>
             </div>
+
+            
             <button
               onClick={() => navigate(`/product/${product.id}`)}
               className="mt-auto bg-black text-white py-2 px-4 rounded hover:bg-yellow-200 hover:text-black"

@@ -8,8 +8,9 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [user, setUser] = useState(null);
+  const isAuthenticated = !!user;
 
-  // Load user from localStorage on mount
+  
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -18,7 +19,7 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Load cart specific to user
+  
   const loadUserCart = async (loggedInUser) => {
     try {
       const res = await axios.get(`http://localhost:3000/users/${loggedInUser.id}`);
@@ -48,6 +49,11 @@ export const CartProvider = ({ children }) => {
     let updatedCart;
 
     if (existingItem) {
+      if (existingItem.qty >= 10) {
+        alert("you can't add more than 10");
+        return;
+      }
+
       updatedCart = cartItems.map((item) =>
         item.id === product.id ? { ...item, qty: item.qty + 1 } : item
       );
@@ -65,18 +71,32 @@ export const CartProvider = ({ children }) => {
     updateUserCartInDB(updatedCart);
   };
 
-  return (
-   <CartContext.Provider
-  value={{
-    cartItems,
-    setCartItems,      
-    addToCart,
-    removeFromCart,
-    user,
-    setUser,
-  }}
->
+  const login = (userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
+    loadUserCart(userData);
+  };
 
+  const logout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    setCartItems([]);
+  };
+
+  return (
+    <CartContext.Provider
+      value={{
+        cartItems,
+        setCartItems,
+        addToCart,
+        removeFromCart,
+        user,
+        setUser,
+        // isAuthenticated,
+        // login,
+        // logout,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

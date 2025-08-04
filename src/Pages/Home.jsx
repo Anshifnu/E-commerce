@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Footer from '../Components/Footer.jsx';
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext.jsx";
 
 const perfumes = [
   {
@@ -13,7 +14,7 @@ const perfumes = [
   {
     id: 2,
     name: "TOM FFRD",
-    description: "Deep, warm, and woody – perfect for evenings.",
+    description: "Deep, warm, and woody - perfect for evenings.",
     image: "https://i.pinimg.com/1200x/93/3f/88/933f885a26b14c9383b71f282fac3aa4.jpg",
     price: "$180"
   },
@@ -27,13 +28,17 @@ const perfumes = [
 ];
 
 function Home() {
+  const user = localStorage.getItem("user")
   const navigate=useNavigate()
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role === "Admin") {
+      navigate("/admin", { replace: true });
+    }
+  }, []);
   return (
     <div className="min-h-screen flex flex-col pt-24">
-
-      
-      
-      {/* Hero Section with Video */}
+         
       <section className="relative w-full h-[89vh] overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0 bg-black/30 z-10"></div>
         <video
@@ -65,7 +70,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Perfume Showcase Section */}
+    
       <section className="py-20 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -105,7 +110,6 @@ function Home() {
         </div>
       </section>
 
-      {/* About Section */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-light text-gray-800 mb-8 tracking-wider">The Art of <span className="font-serif italic">Perfumery</span></h2>

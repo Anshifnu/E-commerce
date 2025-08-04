@@ -10,7 +10,6 @@ const Wishlist = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // Load wishlist from user data in db.json
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -48,6 +47,10 @@ const Wishlist = () => {
   };
 
   const handleMoveToCart = (item) => {
+    if (!item.stock) {
+      alert("This product is out of stock.");
+      return;
+    }
     addToCart(item);
     removeFromWishlist(item.id);
     navigate("/cart");
@@ -58,13 +61,30 @@ const Wishlist = () => {
       <div className="pt-24 text-center">
         <h2 className="text-2xl font-bold">Wishlist</h2>
         <p className="text-gray-500 mt-4">Your wishlist is empty.</p>
+        <button
+          onClick={() => navigate("/product")}
+          className="mt-6 bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600"
+        >
+          Explore More
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 pt-24">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Your Wishlist</h2>
+    <div className="max-w-6xl mx-auto p-6 pt-24 relative">
+      {/* Fixed top-right Explore More button */}
+      <div className="fixed top-20 right-6 z-50">
+        <button
+          onClick={() => navigate("/product")}
+          className="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition duration-200"
+        >
+          Explore More
+        </button>
+      </div>
+
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Your Wishlist</h2>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {wishlist.map((item) => (
           <div

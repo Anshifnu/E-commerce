@@ -19,11 +19,51 @@ function Registration() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+  const validateLive = (name, value) => {
+    let message = "";
+
+    if (name === "name" && !value.trim()) {
+      message = "Name is required";
+    }
+
+    if (name === "email") {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!value.trim()) {
+        message = "Email is required";
+      } else if (!emailPattern.test(value)) {
+        message = "Invalid email format";
+      }
+    }
+
+    if (name === "password") {
+      if (!value) {
+        message = "Password is required";
+      } else if (value.length < 6) {
+        message = "Password must be at least 6 characters";
+      }
+    }
+
+    if (name === "confirmPassword") {
+      if (!value) {
+        message = "Confirm your password";
+      } else if (value !== formdata.password) {
+        message = "Passwords do not match";
+      }
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: message,
+    }));
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setformdata({
       ...formdata,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+    validateLive(name, value);
   };
 
   const validateForm = () => {
@@ -59,7 +99,7 @@ function Registration() {
   const registerUser = async () => {
     try {
       await axios.post("http://localhost:3000/users", formdata);
-         navigate("/login",{ replace: true })
+      navigate("/login", { replace: true });
     } catch (err) {
       console.error(err.message);
     }
@@ -73,86 +113,89 @@ function Registration() {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center  flex items-center justify-between px-12 bg-[url('https://jaguar-fragrances.com/_next/image?url=https%3A%2F%2Ffra1.digitaloceanspaces.com%2Flng-production%2Fjaguar-fragrances%2FJF_ForMenEvolution_visual_landscape.jpg&w=1920&q=75')]">
-      {/* Left Side Text */}
-      <div className="text-white max-w-md">
-        <h1 className="text-4xl font-bold mb-4 drop-shadow-md">Explore Premium Fragrances</h1>
-        <p className="text-lg font-medium leading-relaxed drop-shadow-sm">
-          Discover luxurious scents crafted for elegance and lasting impressions.
-          Whether you seek floral, woody, or oriental - we have the perfect fragrance for every moment.
-        </p>
-      </div>
-
-      {/* Registration Form */}
-      <div className="bg-blue bg-opacity-60 text-white p-8 rounded-xl shadow-lg w-full max-w-md transform transition-all duration-300 hover:-translate-y-1 hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-blue-200">
-        <h2 className="text-2xl font-semibold text-center mb-6">Buy Quality Perfumes</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block mb-1 font-medium text-white">Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={formdata.name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md bg-white/20 text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter your name"
-            />
-            {errors.name && <p className="text-sm text-red-300 mt-1">{errors.name}</p>}
+    <div className="min-h-screen bg-gradient-to-br from-rose-100 via-purple-100 to-rose-200 flex items-center justify-center p-6">
+      <div className="flex w-full max-w-6xl bg-white shadow-2xl rounded-2xl overflow-hidden">
+       
+        <div className="w-1/2 bg-[url('https://imgs.search.brave.com/qMLIm64cnR7xHOLS3q4WBqMoJ5kUngzyhCYyaoUODPs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvODYw/ODAxMzgyL3Bob3Rv/L3BlcmZ1bWUtc3By/YXlpbmctb24tcHVy/cGxlLWJhY2tncm91/bmQuanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPUl1OHpyYlpj/eU9pUFNpOS1TbnEt/TEFCZ2NBUVdMSU12/NXhxUWx5R2x2TXM9')] bg-cover bg-center p-10 hidden md:block">
+          <div className="text-white backdrop-blur-sm bg-black/30 p-6 rounded-xl">
+            <h1 className="text-4xl font-extrabold mb-4 tracking-wide">Elegant Perfume Registration</h1>
+            <p className="text-lg font-light leading-relaxed">
+              Join a world of luxury, crafted with timeless scents. Create your account to explore and enjoy exclusive fragrances.
+            </p>
           </div>
+        </div>
 
-          <div className="mb-4">
-            <label className="block mb-1 font-medium text-white">Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={formdata.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md bg-white/20 text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter your email"
-            />
-            {errors.email && <p className="text-sm text-red-300 mt-1">{errors.email}</p>}
-          </div>
+       
+        <div className="w-full md:w-1/2 p-10">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create Your Account</h2>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block mb-1 text-gray-600 font-medium">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formdata.name}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                placeholder="Enter your name"
+              />
+              {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+            </div>
 
-          <div className="mb-4">
-            <label className="block mb-1 font-medium text-white">Password:</label>
-            <input
-              type="password"
-              name="password"
-              value={formdata.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md bg-white/20 text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter password"
-            />
-            {errors.password && <p className="text-sm text-red-300 mt-1">{errors.password}</p>}
-          </div>
+            <div>
+              <label className="block mb-1 text-gray-600 font-medium">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formdata.email}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                placeholder="Enter your email"
+              />
+              {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
+            </div>
 
-          <div className="mb-6">
-            <label className="block mb-1 font-medium text-white">Confirm Password:</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formdata.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md bg-white/20 text-white placeholder:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Confirm password"
-            />
-            {errors.confirmPassword && <p className="text-sm text-red-300 mt-1">{errors.confirmPassword}</p>}
-          </div>
+            <div>
+              <label className="block mb-1 text-gray-600 font-medium">Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formdata.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                placeholder="Enter password"
+              />
+              {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
+            </div>
 
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-white via-blue-200 to-white text-blue-700 font-semibold py-2 rounded-md hover:from-blue-100 hover:to-blue-300 transition-colors"
-          >
-            Submit
-          </button>
+            <div>
+              <label className="block mb-1 text-gray-600 font-medium">Confirm Password</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formdata.confirmPassword}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                placeholder="Confirm password"
+              />
+              {errors.confirmPassword && <p className="text-sm text-red-500 mt-1">{errors.confirmPassword}</p>}
+            </div>
 
-          <p className="mt-4 text-center text-white">
-            Already have an account?{" "}
-            <Link to="/login" className="text-white underline hover:text-blue-300">
-              LogIn
-            </Link>
-          </p>
-        </form>
+            <button
+              type="submit"
+              className="w-full py-3 bg-gradient-to-r from-rose-400 to-pink-300 text-white font-semibold rounded-lg hover:from-rose-500 hover:to-pink-400 transition-all"
+            >
+              Register
+            </button>
+
+            <p className="text-center text-gray-600 text-sm mt-4">
+              Already have an account?{" "}
+              <Link to="/login" className="text-rose-500 font-medium hover:underline">
+                Log in here
+              </Link>
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );

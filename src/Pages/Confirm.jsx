@@ -1,48 +1,57 @@
-// src/Pages/Confirm.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useCart } from '../context/CartContext'
 
 function Confirm() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { shippingInfo, paymentInfo } = location.state || {};
   const [status, setStatus] = useState("confirming");
-  const { user, setCartItems } = useCart(); // ✅ Use user from context
+  const { user, setCartItems } = useCart();
 
   useEffect(() => {
+   
+    if (!shippingInfo || !paymentInfo) {
+      navigate("/", { replace: true });
+      return;
+    }
+
     const confirmOrder = async () => {
       try {
         if (!user || !user.id) {
-          console.error("User not logged in");
+          console.log("user not logged in");
           return;
         }
 
-        // ✅ Step 1: Fetch fresh user data from backend
         const res = await axios.get(`http://localhost:3000/users/${user.id}`);
         const currentUser = res.data;
-
         const currentCart = currentUser.cart || [];
 
         if (currentCart.length > 0) {
-          // ✅ Step 2: Merge cart into orders
-          const updatedOrders = [...(currentUser.orders || []), ...currentCart];
+          const newOrder = {
+            id: Date.now(),
+            status: "pending",
+            items: currentCart,
+            shippingInfo: shippingInfo || {},
+            paymentInfo: paymentInfo || {},
+            date: new Date().toISOString(),
+          };
 
-          // ✅ Step 3: Clear the cart and update the backend
+          const updatedOrders = [...(currentUser.orders || []), newOrder];
+
           await axios.patch(`http://localhost:3000/users/${user.id}`, {
             cart: [],
             orders: updatedOrders,
           });
 
-          // ✅ Step 4: Clear the frontend cart state
           setCartItems([]);
         }
 
-        // ✅ Step 5: Update status after success
         setStatus("success");
 
-        // ✅ Step 6: Navigate home after delay
         setTimeout(() => {
-          navigate("/", { replace: true });
+          navigate("/orders", { replace: true });
         }, 2000);
       } catch (error) {
         console.error("Error confirming order:", error);
@@ -50,7 +59,7 @@ function Confirm() {
     };
 
     confirmOrder();
-  }, [navigate, user, setCartItems]);
+  }, [navigate, user, setCartItems, shippingInfo, paymentInfo]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -72,7 +81,7 @@ function Confirm() {
             <h2 className="text-xl font-semibold text-green-600">
               Order Placed Successfully!
             </h2>
-            <p className="text-gray-500 mt-2">Redirecting to home...</p>
+            <p className="text-gray-500 mt-2">Redirecting to orders...</p>
           </>
         )}
       </div>
