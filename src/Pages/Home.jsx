@@ -92,7 +92,10 @@ function Home() {
                   <h3 className="text-xl font-light text-gray-800 mb-1 tracking-wider">{perfume.name}</h3>
                   <p className="text-gray-500 text-sm mb-2 font-light">{perfume.description}</p>
                   
-                  <button className="mt-4 bg-transparent border border-gray-800 text-gray-800 px-6 py-2 text-sm hover:bg-gray-800 hover:text-white transition-all duration-300 tracking-wider opacity-0 group-hover:opacity-100">
+                  <button onClick={()=>{
+              navigate("/product")
+            }}
+            className="mt-4 bg-transparent border border-gray-800 text-gray-800 px-6 py-2 text-sm hover:bg-gray-800 hover:text-white transition-all duration-300 tracking-wider opacity-0 group-hover:opacity-100">
                     Explore More
                   </button>
                 </div>
@@ -110,19 +113,34 @@ function Home() {
         </div>
       </section>
 
-      <section className="py-20 px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-light text-gray-800 mb-8 tracking-wider">The Art of <span className="font-serif italic">Perfumery</span></h2>
-          <p className="text-gray-600 leading-relaxed mb-8 font-light max-w-3xl mx-auto">
-            Each fragrance in our collection is meticulously crafted by master perfumers, blending rare ingredients with modern sophistication. 
-            Our perfumes tell a story - one of passion, craftsmanship, and timeless elegance.
-          </p>
-          <div className="w-20 h-px bg-gray-400 mx-auto mb-8"></div>
-          <button className="bg-transparent border border-gray-800 text-gray-800 px-8 py-3 hover:bg-gray-800 hover:text-white transition-all duration-300 tracking-wider">
-            OUR STORY
-          </button>
-        </div>
-      </section>
+      <section className="py-24 px-6 bg-white">
+  <div className="max-w-4xl mx-auto text-center">
+    <div className="mb-2">
+      <span className="text-sm tracking-[0.3em] text-amber-600 font-light">MAISON DE PARFUM</span>
+    </div>
+    <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 tracking-tight">
+      The Art of <span className="font-serif italic text-amber-700">Perfumery</span>
+    </h2>
+    
+    <div className="relative max-w-2xl mx-auto mb-10">
+      <p className="text-gray-600 leading-relaxed text-lg font-light">
+        Each fragrance in our collection is meticulously crafted by master perfumers, blending rare ingredients with modern sophistication. 
+        Our perfumes tell a story — one of passion, craftsmanship, and timeless elegance.
+      </p>
+     
+      <div className="absolute -top-6 -left-6 w-4 h-4 border-t border-l border-amber-300"></div>
+      <div className="absolute -bottom-6 -right-6 w-4 h-4 border-b border-r border-amber-300"></div>
+    </div>
+    
+    <div className="flex flex-col items-center">
+      <div className="w-24 h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent mb-8"></div>
+      <button className="group relative overflow-hidden bg-white border border-amber-600 text-amber-700 px-10 py-3 hover:text-white transition-all duration-500 tracking-wider">
+        <span className="relative z-10">DISCOVER OUR STORY</span>
+        <span className="absolute inset-0 w-0 bg-amber-600 transition-all duration-500 group-hover:w-full"></span>
+      </button>
+    </div>
+  </div>
+</section>
 
       <Footer />
     </div>
