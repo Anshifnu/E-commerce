@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Search } from "lucide-react";
+import { Search, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function ManageOrders() {
@@ -67,88 +67,109 @@ function ManageOrders() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
       <div className="max-w-7xl mx-auto">
-       
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-rose-700">Manage Orders</h1>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-1">Order Management</h1>
+            <p className="text-gray-600">Track and update customer orders</p>
+          </div>
           <button
             onClick={() => navigate("/admin")}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-blue-100 text-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
           >
+            <ArrowLeft className="w-5 h-5" />
             Back to Dashboard
           </button>
         </div>
 
-       
-        <div className="flex items-center mb-4 gap-2">
-          <Search className="text-gray-500" />
+        {/* Search */}
+        <div className="relative mb-6 max-w-md">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
           <input
             type="text"
             placeholder="Search by user or product..."
-            className="border px-3 py-2 rounded-md w-full max-w-md"
+            className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-       
+        {/* Orders Table */}
         {filteredOrders.length > 0 ? (
-          <div className="overflow-x-auto rounded-lg shadow">
-            <table className="min-w-full bg-white">
-              <thead className="bg-gray-200 text-gray-700">
-                <tr>
-                  <th className="px-4 py-3 text-left">#</th>
-                  <th className="px-4 py-3 text-left">User</th>
-                  <th className="px-4 py-3 text-left">Product</th>
-                  <th className="px-4 py-3 text-left">Qty</th>
-                  <th className="px-4 py-3 text-left">Price</th>
-                  <th className="px-4 py-3 text-left">Total</th>
-                  <th className="px-4 py-3 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order, index) => (
-                  <tr
-                    key={order.orderId}
-                    className="border-b hover:bg-gray-50 text-sm"
-                  >
-                    <td className="px-4 py-3">{index + 1}</td>
-                    <td className="px-4 py-3">
-                      <div>
-                        <div className="font-medium">{order.userName}</div>
-                        <div className="text-xs text-gray-500">
-                          {order.userEmail}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">{order.name}</td>
-                    <td className="px-4 py-3">{order.qty}</td>
-                    <td className="px-4 py-3">${order.price}</td>
-                    <td className="px-4 py-3 font-semibold text-green-600">
-                      ${order.qty * order.price}
-                    </td>
-                    <td className="px-4 py-3 capitalize">
-                      <select
-                        value={order.status}
-                        onChange={(e) =>
-                          handleStatusChange(order, e.target.value)
-                        }
-                        className="border rounded px-2 py-1 bg-white"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="processing">Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                      </select>
-                    </td>
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gradient-to-r from-blue-600 to-indigo-700">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">#</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Customer</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Product</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Qty</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Price</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Total</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredOrders.map((order, index) => (
+                    <tr key={order.orderId} className="hover:bg-gray-50 transition-colors duration-150">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-blue-600 font-medium">
+                              {order.userName?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">{order.userName}</div>
+                            <div className="text-xs text-gray-500">{order.userEmail}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.qty}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.price}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
+                        ${order.qty * order.price}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order, e.target.value)}
+                          className={`block w-full pl-3 pr-8 py-2 text-base border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 capitalize ${
+                            order.status === 'pending' ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
+                            order.status === 'processing' ? 'bg-blue-50 border-blue-200 text-blue-700' :
+                            order.status === 'shipped' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' :
+                            'bg-green-50 border-green-200 text-green-700'
+                          }`}
+                        >
+                          <option value="pending" className="bg-white">Pending</option>
+                          <option value="processing" className="bg-white">Processing</option>
+                          <option value="shipped" className="bg-white">Shipped</option>
+                          <option value="Delivered" className="bg-white">Delivered</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : (
-          <p className="text-gray-500 mt-6">No orders found.</p>
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+            <div className="mx-auto max-w-md">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              <h3 className="mt-4 text-lg font-medium text-gray-900">No orders found</h3>
+              <p className="mt-2 text-gray-500">There are currently no orders matching your search.</p>
+            </div>
+          </div>
         )}
       </div>
     </div>

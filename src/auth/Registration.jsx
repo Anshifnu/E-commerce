@@ -118,7 +118,7 @@ function Registration() {
        
         <div className="w-1/2 bg-[url('https://imgs.search.brave.com/qMLIm64cnR7xHOLS3q4WBqMoJ5kUngzyhCYyaoUODPs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvODYw/ODAxMzgyL3Bob3Rv/L3BlcmZ1bWUtc3By/YXlpbmctb24tcHVy/cGxlLWJhY2tncm91/bmQuanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPUl1OHpyYlpj/eU9pUFNpOS1TbnEt/TEFCZ2NBUVdMSU12/NXhxUWx5R2x2TXM9')] bg-cover bg-center p-10 hidden md:block">
           <div className="text-white backdrop-blur-sm bg-black/30 p-6 rounded-xl">
-            <h1 className="text-4xl font-extrabold mb-4 tracking-wide">Elegant Perfume Registration</h1>
+            <h1 className="text-4xl font-extrabold mb-4 tracking-wide">Scentify Perfume Registration</h1>
             <p className="text-lg font-light leading-relaxed">
               Join a world of luxury, crafted with timeless scents. Create your account to explore and enjoy exclusive fragrances.
             </p>

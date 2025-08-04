@@ -199,10 +199,64 @@
       "password": "123456",
       "confirmPassword": "123456",
       "role": "User",
-      "isBlock": false,
+      "isBlock": true,
       "cart": [],
-      "orders": [],
-      "wishlist": [],
+      "orders": [
+        {
+          "id": 1754291586008,
+          "status": "Delivered",
+          "items": [
+            {
+              "id": "4",
+              "name": "MARLY PARIS",
+              "description": "A refreshing blend of Citrus,Fruity and Woody .",
+              "image": "https://parfums-de-marly.com/cdn/shop/files/GREENLEY_125ml_1_70f5c13b-7542-4277-b8f4-988ee637088f.png?v=1743177188&width=533",
+              "price": 130,
+              "stock": true,
+              "category": "GREENLEY",
+              "size": "100ml",
+              "gallery": [
+                "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK2-1x1_1.jpg?v=1751894167&width=823",
+                "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK3-1x1.jpg?v=1751894143&width=823",
+                "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK4-1x1.jpg?v=1751894144&width=823"
+              ],
+              "video": "",
+              "qty": 10
+            }
+          ],
+          "shippingInfo": {
+            "fullName": "Muhammed Anshif",
+            "address": "maliyekkal",
+            "city": "kalikavu",
+            "postalCode": "1234",
+            "country": "india"
+          },
+          "paymentInfo": {
+            "cardNumber": "2323232323292876543456789",
+            "expiry": "45/678909876543234567890987654",
+            "cvv": "098"
+          },
+          "date": "2025-08-04T07:13:06.008Z"
+        }
+      ],
+      "wishlist": [
+        {
+          "id": "4",
+          "name": "MARLY PARIS",
+          "description": "A refreshing blend of Citrus,Fruity and Woody .",
+          "image": "https://parfums-de-marly.com/cdn/shop/files/GREENLEY_125ml_1_70f5c13b-7542-4277-b8f4-988ee637088f.png?v=1743177188&width=533",
+          "price": 130,
+          "stock": true,
+          "category": "GREENLEY",
+          "size": "100ml",
+          "gallery": [
+            "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK2-1x1_1.jpg?v=1751894167&width=823",
+            "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK3-1x1.jpg?v=1751894143&width=823",
+            "https://parfums-de-marly.com/cdn/shop/files/GREENLEY-PERFUME-125-PACK4-1x1.jpg?v=1751894144&width=823"
+          ],
+          "video": ""
+        }
+      ],
       "created_at": "2025-08-03T11:01:50.843Z"
     },
     {
@@ -214,7 +268,44 @@
       "role": "User",
       "isBlock": false,
       "cart": [],
-      "orders": [],
+      "orders": [
+        {
+          "id": 1754293972759,
+          "status": "pending",
+          "items": [
+            {
+              "id": "3",
+              "name": "MARLY PARIS",
+              "description": "A refreshing blend of Amber and Woody.",
+              "image": "https://parfums-de-marly.com/cdn/shop/files/CARLISLE_125ml_1_fdedf997-30f9-414d-9817-9181ee0b5a71.png?v=1743663242&width=533",
+              "price": 120,
+              "stock": true,
+              "category": "CARLISLE",
+              "size": "100ml",
+              "gallery": [
+                "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK3-1x1.jpg?v=1751871196&width=823",
+                "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK2-1x1.jpg?v=1751871196&width=823",
+                "https://parfums-de-marly.com/cdn/shop/files/PEGASUS-EXCLUSIF-PERFUME-125-PACK4-1x1.jpg?v=1751871101&width=823"
+              ],
+              "video": "",
+              "qty": 1
+            }
+          ],
+          "shippingInfo": {
+            "fullName": "Muhammed Anshif",
+            "address": "maliyekkal",
+            "city": "kalikavu",
+            "postalCode": "679339",
+            "country": "india"
+          },
+          "paymentInfo": {
+            "cardNumber": "1222133224234223",
+            "expiry": "12/25",
+            "cvv": "121"
+          },
+          "date": "2025-08-04T07:52:52.759Z"
+        }
+      ],
       "wishlist": [],
       "created_at": "2025-08-03T12:19:04.770Z"
     }

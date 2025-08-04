@@ -37,9 +37,9 @@ function Home() {
     }
   }, []);
   return (
-    <div className="min-h-screen flex flex-col pt-24">
+    <div className="min-h-screen flex flex-col">
          
-      <section className="relative w-full h-[89vh] overflow-hidden flex items-center justify-center">
+      <section className="relative w-full h-[100vh] overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0 bg-black/30 z-10"></div>
         <video
           className="absolute top-0 left-0 w-full h-full object-cover z-0"

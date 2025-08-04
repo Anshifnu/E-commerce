@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { useEffect } from "react";
 
 function Payment() {
   const navigate = useNavigate();
   const { cartItems } = useCart();
-    useEffect(() => {
+
+  useEffect(() => {
     if (!cartItems || cartItems.length === 0) {
       navigate("/product", { replace: true });
     }
@@ -30,32 +30,72 @@ function Payment() {
 
   const [errors, setErrors] = useState({});
 
+  const validateCardFields = (name, value) => {
+    if (name === "cardNumber" && (!/^\d{16}$/.test(value))) {
+      return "Card number must be 16 digits";
+    }
+    if (name === "cvv" && (!/^\d{3}$/.test(value))) {
+      return "CVV must be 3 digits";
+    }
+    if (name === "expiry") {
+      if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(value)) {
+        return "Expiry must be in MM/YY format";
+      }
+      const [month, year] = value.split("/").map(Number);
+      const now = new Date();
+      const expiryDate = new Date(`20${year}`, month - 1);
+      if (expiryDate < now) {
+        return "Card is expired";
+      }
+    }
+    return "";
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updatedValue = value;
 
-    if (name === "expiry") {
-      const cleaned = value.replace(/[^\d]/g, "");
-      if (cleaned.length <= 4) {
-        if (cleaned.length >= 3) {
-          updatedValue = cleaned.slice(0, 2) + "/" + cleaned.slice(2);
-        } else {
-          updatedValue = cleaned;
-        }
-      }
-    }
+ if (name === "expiry") {
+  let cleaned = value.replace(/[^\d]/g, "").slice(0, 4);
 
-    setFormData({ ...formData, [name]: updatedValue });
+  if (cleaned.length >= 3) {
+    const month = cleaned.slice(0, 2);
+    const year = cleaned.slice(2);
 
-    if (!updatedValue.trim()) {
-      setErrors((prev) => ({ ...prev, [name]: `${name} is required` }));
+   
+    if (parseInt(month) < 1 || parseInt(month) > 12) {
+      setErrors((prev) => ({ ...prev, expiry: "Invalid month (01–12)" }));
     } else {
       setErrors((prev) => {
         const updated = { ...prev };
-        delete updated[name];
+        delete updated.expiry;
         return updated;
       });
     }
+
+    updatedValue = `${month}/${year}`;
+  } else {
+    updatedValue = cleaned;
+  }
+}
+
+
+    setFormData((prev) => ({ ...prev, [name]: updatedValue }));
+
+    const errorMsg =
+      !updatedValue.trim()
+        ? `${name} is required`
+        : validateCardFields(name, updatedValue);
+
+    setErrors((prev) => {
+      const updated = { ...prev };
+      if (errorMsg) {
+        updated[name] = errorMsg;
+      } else {
+        delete updated[name];
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = (e) => {
@@ -65,6 +105,11 @@ function Payment() {
     for (const key in formData) {
       if (!formData[key].trim()) {
         newErrors[key] = `${key} is required`;
+      } else {
+        const specificError = validateCardFields(key, formData[key]);
+        if (specificError) {
+          newErrors[key] = specificError;
+        }
       }
     }
 
@@ -96,6 +141,7 @@ function Payment() {
     });
   };
 
+  // JSX content remains unchanged
   return (
     <div className="min-h-screen bg-gray-100 p-6 pt-20">
       <form
@@ -106,113 +152,49 @@ function Payment() {
           Payment Details
         </h2>
 
-        
+        {/* Shipping Fields */}
         <div>
           <h3 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Shipping Address</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <input
-                type="text"
-                name="fullName"
-                placeholder="Full Name"
-                value={formData.fullName}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="address"
-                placeholder="Address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="postalCode"
-                placeholder="Postal Code"
-                value={formData.postalCode}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>}
-            </div>
-            <div className="md:col-span-2">
-              <input
-                type="text"
-                name="country"
-                placeholder="Country"
-                value={formData.country}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
-            </div>
+            {["fullName", "address", "city", "postalCode", "country"].map((field, index) => (
+              <div key={field} className={field === "country" ? "md:col-span-2" : ""}>
+                <input
+                  type="text"
+                  name={field}
+                  placeholder={field.replace(/([A-Z])/g, " $1")}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+              </div>
+            ))}
           </div>
         </div>
 
-       
+        {/* Payment Fields */}
         <div>
           <h3 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Payment Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <input
-                type="text"
-                name="cardNumber"
-                placeholder="Card Number"
-                value={formData.cardNumber}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.cardNumber && <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="expiry"
-                placeholder="MM/YY"
-                value={formData.expiry}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.expiry && <p className="text-red-500 text-sm mt-1">{errors.expiry}</p>}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="cvv"
-                placeholder="CVV"
-                value={formData.cvv}
-                onChange={handleChange}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              {errors.cvv && <p className="text-red-500 text-sm mt-1">{errors.cvv}</p>}
-            </div>
+            {["cardNumber", "expiry", "cvv"].map((field) => (
+              <div key={field}>
+                <input
+                  type="text"
+                  name={field}
+                  placeholder={field === "cvv" ? "CVV" : field === "expiry" ? "MM/YY" : "Card Number"}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+              </div>
+            ))}
           </div>
         </div>
 
-       
         <div className="pt-6 border-t mt-4 flex flex-col sm:flex-row sm:justify-between items-center">
           <p className="text-lg font-semibold mb-4 sm:mb-0">
-            Total Amount:{" "}
-            <span className="text-green-600">${totalPrice.toFixed(2)}</span>
+            Total Amount: <span className="text-green-600">${totalPrice.toFixed(2)}</span>
           </p>
           <button
             type="submit"

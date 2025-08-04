@@ -70,7 +70,7 @@ function Login() {
         }`}
       >
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6 font-serif tracking-wide">
-          Perfume Login
+          Scentify
         </h2>
 
         {error && (
@@ -101,7 +101,7 @@ function Login() {
         </button>
 
         <p className="mt-5 text-center text-gray-700 text-sm">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/register" className="text-yellow-700 font-medium hover:underline">
             Register
           </Link>
