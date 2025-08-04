@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { URL } from "../apiEndpoint";
 
 const CartContext = createContext();
 
@@ -22,7 +23,7 @@ export const CartProvider = ({ children }) => {
   
   const loadUserCart = async (loggedInUser) => {
     try {
-      const res = await axios.get(`http://localhost:3000/users/${loggedInUser.id}`);
+      const res = await axios.get(`${URL}/users/${loggedInUser.id}`);
       const userCart = res.data.cart || [];
       setCartItems(userCart);
     } catch (err) {
@@ -33,7 +34,7 @@ export const CartProvider = ({ children }) => {
   const updateUserCartInDB = async (updatedCart) => {
     if (!user) return;
     try {
-      await axios.patch(`http://localhost:3000/users/${user.id}`, { cart: updatedCart });
+      await axios.patch(`${URL}/users/${user.id}`, { cart: updatedCart });
     } catch (err) {
       console.error("Failed to update user cart in DB:", err);
     }

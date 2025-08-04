@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { URL } from "../apiEndpoint";
 
 function Registration() {
   const [formdata, setformdata] = useState({
@@ -98,7 +99,7 @@ function Registration() {
 
   const registerUser = async () => {
     try {
-      await axios.post("http://localhost:3000/users", formdata);
+      await axios.post(`${URL}/users`, formdata);
       navigate("/login", { replace: true });
     } catch (err) {
       console.error(err.message);

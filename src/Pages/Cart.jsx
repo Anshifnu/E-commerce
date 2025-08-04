@@ -3,6 +3,7 @@ import React from "react";
 import { useCart } from "../context/CartContext";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { URL } from "../apiEndpoint";
 
 const Cart = () => {
   const { cartItems, removeFromCart, addToCart, setCartItems } = useCart();
@@ -25,7 +26,7 @@ const Cart = () => {
 
       try {
         const user = JSON.parse(localStorage.getItem("user"));
-        await fetch(`http://localhost:3000/users/${user.id}`, {
+        await fetch(`${URL}/users/${user.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

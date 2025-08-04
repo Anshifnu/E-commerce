@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useCart } from '../context/CartContext'
+import { URL } from "../apiEndpoint";
 
 function Confirm() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function Confirm() {
           return;
         }
 
-        const res = await axios.get(`http://localhost:3000/users/${user.id}`);
+        const res = await axios.get(`${URL}/users/${user.id}`);
         const currentUser = res.data;
         const currentCart = currentUser.cart || [];
 
@@ -40,7 +41,7 @@ function Confirm() {
 
           const updatedOrders = [...(currentUser.orders || []), newOrder];
 
-          await axios.patch(`http://localhost:3000/users/${user.id}`, {
+          await axios.patch(`${URL}/users/${user.id}`, {
             cart: [],
             orders: updatedOrders,
           });

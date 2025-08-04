@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Search, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { URL } from "../apiEndpoint";
 
 function ManageOrders() {
   const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ function ManageOrders() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users").then((res) => {
+    axios.get(`${URL}/users`).then((res) => {
       const userData = res.data || [];
       setUsers(userData);
 
@@ -35,7 +36,7 @@ function ManageOrders() {
   }, []);
 
   const handleStatusChange = (order, newStatus) => {
-    axios.get(`http://localhost:3000/users/${order.userId}`).then((res) => {
+    axios.get(`${URL}/users/${order.userId}`).then((res) => {
       const user = res.data;
       const updatedOrders = [...user.orders];
 
@@ -43,7 +44,7 @@ function ManageOrders() {
         updatedOrders[order.orderIndex].status = newStatus;
 
         axios
-          .patch(`http://localhost:3000/users/${order.userId}`, {
+          .patch(`${URL}/users/${order.userId}`, {
             orders: updatedOrders,
           })
           .then(() => {

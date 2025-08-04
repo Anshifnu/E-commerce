@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { URL } from "../apiEndpoint";
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users").then((res) => {
+    axios.get(`${URL}/users`).then((res) => {
       setUsers(res.data || []);
     });
   }, []);
 
   const toggleBlockStatus = async (id, currentStatus) => {
     try {
-      await axios.patch(`http://localhost:3000/users/${id}`, {
+      await axios.patch(`${URL}/users/${id}`, {
         isBlock: !currentStatus,
       });
 
@@ -31,7 +32,7 @@ function ManageUsers() {
   const toggleAdminStatus = async (id, currentRole) => {
     const newRole = currentRole === "Admin" ? "User" : "Admin";
     try {
-      await axios.patch(`http://localhost:3000/users/${id}`, {
+      await axios.patch(`${URL}/users/${id}`, {
         role: newRole,
       });
 

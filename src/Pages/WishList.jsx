@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { URL } from "../apiEndpoint";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -20,7 +21,7 @@ const Wishlist = () => {
 
   const fetchWishlist = async (userId) => {
     try {
-      const res = await axios.get(`http://localhost:3000/users/${userId}`);
+      const res = await axios.get(`${URL}/users/${userId}`);
       setWishlist(res.data.wishlist || []);
       localStorage.setItem("wishlist", JSON.stringify(res.data.wishlist || []));
     } catch (err) {
@@ -31,7 +32,7 @@ const Wishlist = () => {
   const updateWishlist = async (newWishlist) => {
     if (!user) return;
     try {
-      await axios.patch(`http://localhost:3000/users/${user.id}`, {
+      await axios.patch(`${URL}/users/${user.id}`, {
         wishlist: newWishlist,
       });
       setWishlist(newWishlist);

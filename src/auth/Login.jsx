@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
+import { URL } from "../apiEndpoint";
 
 function Login() {
   const [formdata, setFormdata] = useState({ email: "", password: "" });
@@ -36,7 +37,7 @@ function Login() {
   const handleLogin = async () => {
     if (!validateForm()) return;
     try {
-      const res = await axios.get("http://localhost:3000/users");
+      const res = await axios.get(`${URL}/users`);
       const matchedUser = res.data.find(
         (u) => u.email === formdata.email && u.password === formdata.password
       );

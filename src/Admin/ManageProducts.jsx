@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { URL } from "../apiEndpoint";
 
 function ManageProducts() {
   const [products, setProducts] = useState([]);
@@ -23,14 +24,14 @@ function ManageProducts() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3000/products").then((res) => {
+    axios.get(`${URL}/products`).then((res) => {
       setProducts(res.data || []);
     });
   }, []);
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/products/${id}`);
+      await axios.delete(`${URL}/products/${id}`);
       setProducts((prev) => prev.filter((product) => product.id !== id));
     } catch (error) {
       console.error("Failed to delete product:", error);
@@ -53,7 +54,7 @@ function ManageProducts() {
   const handleUpdate = async () => {
     try {
       await axios.patch(
-        `http://localhost:3000/products/${editingProduct.id}`,
+        `${URL}/products/${editingProduct.id}`,
         editingProduct
       );
       setProducts((prev) =>
@@ -82,7 +83,7 @@ function ManageProducts() {
         gallery: newProduct.gallery.split(",").map((url) => url.trim()),
         stock: Boolean(newProduct.stock),
       };
-      await axios.post("http://localhost:3000/products", productToAdd);
+      await axios.post(`${URL}/products`, productToAdd);
       setProducts((prev) => [...prev, productToAdd]);
       setNewProduct({
         id: "",

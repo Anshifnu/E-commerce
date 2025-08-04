@@ -15,6 +15,7 @@ import {
   Legend,
 } from "recharts";
 import { LogOut } from "lucide-react";
+import { URL } from "../apiEndpoint";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
 
@@ -30,7 +31,7 @@ function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users").then((res) => {
+    axios.get(`${URL}/users"`).then((res) => {
       setUsers(res.data || []);
     });
   }, []);

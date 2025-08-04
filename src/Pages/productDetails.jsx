@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { URL } from '../apiEndpoint';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -21,7 +22,7 @@ const ProductDetails = () => {
     }, []);
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/products/${id}`)
+    axios.get(`${URL}/products/${id}`)
       .then(res => {
         setProduct(res.data);
         setMainImage(res.data.image); 

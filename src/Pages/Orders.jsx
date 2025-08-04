@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { URL } from "../apiEndpoint";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -18,7 +19,7 @@ function Orders() {
     const fetchUserOrders = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get(`http://localhost:3000/users/${userId}`);
+        const res = await axios.get(`${URL}/users/${userId}`);
         setOrders(res.data.orders || []);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -31,12 +32,12 @@ function Orders() {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      const userRes = await axios.get(`http://localhost:3000/users/${userId}`);
+      const userRes = await axios.get(`${URL}/users/${userId}`);
       const userData = userRes.data;
 
       const updatedOrders = userData.orders.filter(order => order.id !== orderId);
 
-      await axios.put(`http://localhost:3000/users/${userId}`, {
+      await axios.put(`${URL}/users/${userId}`, {
         ...userData,
         orders: updatedOrders,
       });

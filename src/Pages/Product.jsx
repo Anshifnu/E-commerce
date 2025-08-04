@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaHeart, FaSearch, FaArrowRight } from "react-icons/fa";
+import { URL } from '../apiEndpoint';
 
 const Product = () => {
   const navigate = useNavigate();
@@ -22,9 +23,9 @@ const Product = () => {
     const fetchData = async () => {
       try {
         const [productsRes, wishlistRes] = await Promise.all([
-          axios.get('http://localhost:3000/products'),
+          axios.get(`${URL}/products`),
           localStorage.getItem("user") ? 
-            axios.get(`http://localhost:3000/users/${JSON.parse(localStorage.getItem("user")).id}`) 
+            axios.get(`${URL}/users/${JSON.parse(localStorage.getItem("user")).id}`) 
             : Promise.resolve({ data: { wishlist: [] } })
         ]);
         
@@ -49,7 +50,7 @@ const Product = () => {
     }
 
     try {
-      const res = await axios.get(`http://localhost:3000/users/${user.id}`);
+      const res = await axios.get(`${URL}/users/${user.id}`);
       const existingWishlist = res.data.wishlist || [];
 
       if (existingWishlist.some(item => item.id === product.id)) {
@@ -58,7 +59,7 @@ const Product = () => {
       }
 
       const updatedWishlist = [...existingWishlist, product];
-      await axios.patch(`http://localhost:3000/users/${user.id}`, {
+      await axios.patch(`${URL}/users/${user.id}`, {
         wishlist: updatedWishlist
       });
 
