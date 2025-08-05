@@ -31,7 +31,7 @@ function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    axios.get(`${URL}/users"`).then((res) => {
+    axios.get(`${URL}/users`).then((res) => {
       setUsers(res.data || []);
     });
   }, []);
