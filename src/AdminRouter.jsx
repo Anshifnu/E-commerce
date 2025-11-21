@@ -9,9 +9,11 @@ const AdminRouter = () => {
     return <Navigate to="/login" />;
   }
 
-  if (user.role !== "Admin") {
+  if (user.role !== "admin") {
     return <Navigate to="/" />;
   }
+
+  
 
   return <Outlet />;
 };

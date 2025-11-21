@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import {
   BarChart,
   Bar,
@@ -16,30 +16,37 @@ import {
 } from "recharts";
 import { LogOut } from "lucide-react";
 import { URL } from "../apiEndpoint";
+import api from "../API/axios";
+import { useUser } from "../context/UserContext";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+  const {logout}=useUser()
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "Admin") {
+    if (!user || user.role !== "admin") {
       navigate("/login", { replace: true });
     }
   }, []);
 
   useEffect(() => {
-    axios.get(`${URL}/users`).then((res) => {
+    api.get(`admin/dashboard/`).then((res) => {
       setUsers(res.data || []);
+      
+      
     });
   }, []);
+  
+  
 
-  const totalUsers = users.filter((u) => u.role === "User").length;
+  const totalUsers = users.filter((u) => u.role === "user").length;
 
   const userOrders = users
-    .filter((u) => u.role === "User")
+    .filter((u) => u.role === "user")
     .flatMap((user) => user.orders || []);
 
   const totalOrders = userOrders.length;

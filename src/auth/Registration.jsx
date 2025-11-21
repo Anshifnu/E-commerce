@@ -2,19 +2,16 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { URL } from "../apiEndpoint";
+import api from "../API/axios";
+
 
 function Registration() {
   const [formdata, setformdata] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    role: "User",
-    isBlock: false,
-    cart: [],
-    orders: [],
-    wishlist: [],
-    created_at: new Date().toISOString(),
+    confirmPassword: ""
+
   });
 
   const [errors, setErrors] = useState({});
@@ -97,14 +94,28 @@ function Registration() {
     return Object.keys(newErrors).length === 0;
   };
 
+
+
   const registerUser = async () => {
-    try {
-      await axios.post(`${URL}/users`, formdata);
-      navigate("/login", { replace: true });
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
+  try {
+    
+    const payload = {
+      username: formdata.name,  
+      email: formdata.email,
+      password: formdata.password,
+      confirm_password: formdata.confirmPassword,
+    };
+
+    await api.post('user/register/', payload);
+    navigate("/login", { replace: true });
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+};
+
+
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -203,3 +214,5 @@ function Registration() {
 }
 
 export default Registration;
+
+

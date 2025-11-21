@@ -3,43 +3,30 @@ import React from "react";
 import { useCart } from "../context/CartContext";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { URL } from "../apiEndpoint";
 
 const Cart = () => {
-  const { cartItems, removeFromCart, addToCart, setCartItems } = useCart();
+  const { cartItems, removeFromCart, addToCart, updateQuantity } = useCart();
   const navigate = useNavigate();
 
   const totalPrice = cartItems.reduce(
-    (sum, item) => sum + item.price * item.qty,
+    (sum, item) => sum + item.product.price * item.qty,
     0
   );
 
+  // 🧮 Decrease quantity
   const handleDecrease = async (item) => {
-    if (item.qty === 1) {
-      alert("you can't decrease below 1");
-    } else {
-      const updatedQty = item.qty - 1;
-      const updatedCart = cartItems.map((p) =>
-        p.id === item.id ? { ...p, qty: updatedQty } : p
-      );
-      setCartItems(updatedCart);
-
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        await fetch(`${URL}/users/${user.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ cart: updatedCart }),
-        });
-      } catch (err) {
-        console.error("Failed to update cart quantity", err);
-      }
+    if (item.qty <= 1) {
+      alert("You can't decrease below 1");
+      return;
     }
+    await updateQuantity(item.cartItemId, item.qty - 1);
   };
 
-  
+  // 🧮 Increase quantity
+  const handleIncrease = async (item) => {
+    await addToCart(item.product); // uses context logic (PATCH or POST)
+  };
+
   if (cartItems.length === 0) {
     return (
       <div className="p-6 pt-28 text-center">
@@ -59,7 +46,6 @@ const Cart = () => {
     );
   }
 
-  
   return (
     <>
       <div className="max-w-6xl mx-auto px-6 pt-28">
@@ -74,39 +60,45 @@ const Cart = () => {
       </div>
 
       <div className="max-w-6xl mx-auto p-6 flex flex-col md:flex-row gap-8">
+        {/* 🛒 Cart Items Section */}
         <div className="flex-1">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Cart</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">Your Cart</h2>
 
-          {cartItems.map((product) => (
+          {cartItems.map((item) => (
             <div
-              key={product.id}
+              key={item.cartItemId}
               className="flex items-center border rounded-lg shadow-md p-4 mb-4 gap-4"
             >
               <img
-                src={product.image}
-                alt={product.name}
+                src={item.product.images[0]?.image || "/placeholder.jpg"}
+                alt={item.product.name}
                 className="w-24 h-24 object-cover rounded-lg"
               />
 
               <div className="flex-1">
-                <h3 className="text-lg font-semibold">{product.name}</h3>
+                <h3 className="text-lg font-semibold">{item.product.name}</h3>
+                <p className="text-gray-500 text-sm">{item.product.brand}</p>
                 <p className="text-gray-600 text-sm line-clamp-2">
-                  {product.description}
+                  {item.product.description}
                 </p>
-                <p className="text-blue-600 font-bold mt-1">${product.price}</p>
+                <p className="text-blue-600 font-bold mt-1">
+                  ₹{item.product.price}
+                </p>
+                <p className="text-sm text-gray-500">
+                  In stock: {item.product.stock}
+                </p>
 
+                {/* Quantity Controls */}
                 <div className="flex items-center mt-2 space-x-3">
                   <button
-                    onClick={() => handleDecrease(product)}
+                    onClick={() => handleDecrease(item)}
                     className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
                   >
                     <Minus size={16} />
                   </button>
-                  <span className="text-gray-800 font-medium">
-                    {product.qty}
-                  </span>
+                  <span className="text-gray-800 font-medium">{item.qty}</span>
                   <button
-                    onClick={() => addToCart(product)}
+                    onClick={() => handleIncrease(item)}
                     className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
                   >
                     <Plus size={16} />
@@ -114,8 +106,9 @@ const Cart = () => {
                 </div>
               </div>
 
+              {/* Delete */}
               <button
-                onClick={() => removeFromCart(product.id)}
+                onClick={() => removeFromCart(item.cartItemId)}
                 className="ml-4 text-red-500 hover:text-red-700"
                 title="Remove item"
               >
@@ -125,6 +118,7 @@ const Cart = () => {
           ))}
         </div>
 
+        {/* 💰 Order Summary */}
         <div className="w-full md:w-1/3 bg-gray-100 p-6 rounded-lg shadow-md h-fit self-center">
           <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
           <div className="flex justify-between mb-2 text-gray-700">
@@ -133,7 +127,7 @@ const Cart = () => {
           </div>
           <div className="flex justify-between mb-4 text-gray-700">
             <span>Total Price:</span>
-            <span className="font-semibold">${totalPrice.toFixed(2)}</span>
+            <span className="font-semibold">₹{totalPrice.toFixed(2)}</span>
           </div>
 
           <button

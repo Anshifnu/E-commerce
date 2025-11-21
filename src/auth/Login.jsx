@@ -1,17 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
-import { useCart } from "../context/CartContext";
-import { URL } from "../apiEndpoint";
+import { useUser } from "../context/UserContext";
 
 function Login() {
   const [formdata, setFormdata] = useState({ email: "", password: "" });
   const [shake, setShake] = useState(false);
   const [error, setError] = useState("");
-  const { setUser,user } = useCart();
+  const { login } = useUser();
   const navigate = useNavigate();
-
-
 
   const handleChange = (e) => {
     setFormdata({ ...formdata, [e.target.name]: e.target.value });
@@ -36,24 +32,16 @@ function Login() {
 
   const handleLogin = async () => {
     if (!validateForm()) return;
-    try {
-      const res = await axios.get(`${URL}/users`);
-      const matchedUser = res.data.find(
-        (u) => u.email === formdata.email && u.password === formdata.password
-      );
-      if (matchedUser) {
-        if (matchedUser.isBlock) {
-          setError("Your account has been blocked by the admin."); setShake(true); return;
-        }
-        localStorage.setItem("user", JSON.stringify(matchedUser));
-        setUser(matchedUser);
-        navigate(matchedUser.role === "Admin" ? "/admin" : "/", { replace: true });
-      } else {
-        setError("Invalid email or password."); setShake(true);
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Server error. Try again later."); setShake(true);
+    const result = await login(formdata.email, formdata.password);
+    if (result.success) {
+      if(result.user.role =='admin'){
+        navigate("/admin", { replace: true });
+      }else{
+      navigate("/", { replace: true });
+      }  
+    } else {
+      setError(result.error);
+      setShake(true);
     }
   };
 
@@ -86,14 +74,20 @@ function Login() {
           onChange={handleChange}
           className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formdata.password}
-          onChange={handleChange}
-          className="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-        />
+      <input
+  type="password"
+  name="password"
+  placeholder="Password"
+  value={formdata.password}
+  onChange={handleChange}
+  className="w-full p-3 mb-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+/>
+
+<p className="text-right text-sm mb-4">
+  <Link to="/forgetpassword" className="text-yellow-700 hover:underline">
+    Forgot Password?
+  </Link>
+</p>
         <button
           onClick={handleLogin}
           className="w-full bg-yellow-600 text-white py-3 rounded-lg hover:bg-yellow-700 transition-all font-semibold"
@@ -109,7 +103,6 @@ function Login() {
         </p>
       </div>
 
-      
       <style>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }

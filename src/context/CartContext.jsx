@@ -1,88 +1,137 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
-import { URL } from "../apiEndpoint";
+import api from "../API/axios";
+import { useUser } from "./UserContext";
 
 const CartContext = createContext();
-
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
+  const { user } = useUser();
   const [cartItems, setCartItems] = useState([]);
-  const [user, setUser] = useState(null);
-  const isAuthenticated = !!user;
 
-  
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser);
-      loadUserCart(storedUser);
-    }
-  }, []);
-
-  
-  const loadUserCart = async (loggedInUser) => {
-    try {
-      const res = await axios.get(`${URL}/users/${loggedInUser.id}`);
-      const userCart = res.data.cart || [];
-      setCartItems(userCart);
-    } catch (err) {
-      console.error("Failed to load cart:", err);
-    }
-  };
-
-  const updateUserCartInDB = async (updatedCart) => {
+  // 🔄 Load all cart items
+  const loadCart = async () => {
     if (!user) return;
     try {
-      await axios.patch(`${URL}/users/${user.id}`, { cart: updatedCart });
+      const res = await api.get("cart/");
+      const mappedCart = res.data.map((item) => ({
+        cartItemId: item.id,
+        qty: item.qty,
+        product: {
+          id: item.product.id,
+          name: item.product.name,
+          price: parseFloat(item.product.price),
+          description: item.product.description,
+          brand: item.product.brand, // brand is string, not object
+          stock: item.product.stock,
+          images: item.product.images || [], // keep array
+        },
+      }));
+      setCartItems(mappedCart);
     } catch (err) {
-      console.error("Failed to update user cart in DB:", err);
+      console.error("Failed to load cart:", err);
+      setCartItems([]);
     }
   };
 
-  const addToCart = async (product) => {
-    if (!user) {
-      alert("Please login to add items to cart.");
-      return;
-    }
+  useEffect(() => {
+    loadCart();
+  }, [user]);
 
-    const existingItem = cartItems.find((item) => item.id === product.id);
-    let updatedCart;
+ // 🛒 Add to cart
+const addToCart = async (product) => {
+  try {
+    const existingItem = cartItems.find(
+      (item) => item.product.id === product.id
+    );
 
     if (existingItem) {
-      if (existingItem.qty >= 10) {
-        alert("you can't add more than 10");
+      const newQty = existingItem.qty + 1;
+
+      // ⚠️ limit 10 per item
+      if (newQty > 10) {
+        alert("You can't add more than 10 of this item.");
         return;
       }
 
-      updatedCart = cartItems.map((item) =>
-        item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+      const res = await api.patch(`cart/${existingItem.cartItemId}/`, {
+        qty: newQty,
+      });
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.cartItemId === existingItem.cartItemId
+            ? { ...item, qty: res.data.qty }
+            : item
+        )
       );
     } else {
-      updatedCart = [...cartItems, { ...product, qty: 1 }];
+      const res = await api.post("cart/", {
+        product_id: product.id,
+        qty: 1,
+      });
+
+      const newItem = {
+        cartItemId: res.data.id,
+        qty: res.data.qty,
+        product: {
+          id: res.data.product.id,
+          name: res.data.product.name,
+          price: parseFloat(res.data.product.price),
+          description: res.data.product.description,
+          brand: res.data.product.brand,
+          stock: res.data.product.stock,
+          images: res.data.product.images || [],
+        },
+      };
+
+      setCartItems((prev) => [...prev, newItem]);
+    }
+  } catch (err) {
+    console.error("Failed to add/update cart:", err);
+  }
+};
+
+// ✏️ Update quantity
+const updateQuantity = async (cartItemId, qty) => {
+  try {
+    if (qty < 1) {
+      alert("You can't decrease below 1.");
+      return;
+    }
+    if (qty > 10) {
+      alert("You can't add more than 10 of this item.");
+      return;
     }
 
-    setCartItems(updatedCart);
-    updateUserCartInDB(updatedCart);
-  };
+    const res = await api.patch(`cart/${cartItemId}/`, { qty });
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.cartItemId === cartItemId
+          ? { ...item, qty: res.data.qty }
+          : item
+      )
+    );
+  } catch (err) {
+    console.error("Failed to update quantity:", err);
+  }
+};
 
-  const removeFromCart = (id) => {
-    const updatedCart = cartItems.filter((item) => item.id !== id);
-    setCartItems(updatedCart);
-    updateUserCartInDB(updatedCart);
-  };
 
-  const login = (userData) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
-    loadUserCart(userData);
-  };
+const removeFromCart = async (cartItemId) => {
+  try {
+    await api.delete(`cart/${cartItemId}/`);
+    setCartItems((prev) => prev.filter((i) => i.cartItemId !== cartItemId));
+  } catch (err) {
+    console.error("Failed to remove from cart:", err);
+  }
+};
 
-  const logout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    setCartItems([]);
-  };
+  // 🧮 Totals
+  const totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + item.qty * item.product.price,
+    0
+  );
 
   return (
     <CartContext.Provider
@@ -91,11 +140,10 @@ export const CartProvider = ({ children }) => {
         setCartItems,
         addToCart,
         removeFromCart,
-        user,
-        setUser,
-        // isAuthenticated,
-        // login,
-        // logout,
+        updateQuantity,
+        totalQty,
+        totalPrice,
+        reloadCart: loadCart,
       }}
     >
       {children}

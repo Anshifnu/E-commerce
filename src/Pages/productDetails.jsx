@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { URL } from '../apiEndpoint';
+import api from '../API/axios';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -12,20 +13,27 @@ const ProductDetails = () => {
   const [preview, setPreview] = useState(null);
   const [previewType, setPreviewType] = useState(null);
   const { addToCart } = useCart();
-   const user = localStorage.getItem("user")
-    const navigate=useNavigate()
-    useEffect(() => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user.role === "Admin") {
-        navigate("/admin", { replace: true });
-      }
-    }, []);
+  const user = localStorage.getItem("user")
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${URL}/products/${id}`)
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role === "admin") {
+      navigate("/admin", { replace: true });
+    }
+  }, []);
+
+  useEffect(() => {
+    api.get(`/products/${id}`)
       .then(res => {
+        // ✅ Prevent inactive products from showing
+        if (!res.data.is_active) {
+          navigate("/", { replace: true });
+          return;
+        }
+
         setProduct(res.data);
-        setMainImage(res.data.image); 
+        setMainImage(res.data.images);
       })
       .catch(err => console.error(err));
   }, [id]);
@@ -40,7 +48,7 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
-    if (!product.stock) {
+    if (product.stock == 0) {
       alert("Product is out of stock");
       return;
     }
@@ -58,7 +66,7 @@ const ProductDetails = () => {
       <div className="flex flex-col md:flex-row gap-8">
         <div className="w-full md:w-1/2 px-4">
           <img
-            src={mainImage}
+            src={mainImage[0].image}
             alt={product.name}
             className="w-full h-[28rem] object-contain rounded-xl border shadow-md p-4"
           />
@@ -66,7 +74,7 @@ const ProductDetails = () => {
 
         <div className="w-full md:w-1/2 flex flex-col justify-start gap-6 px-4">
           <p className="text-lg text-gray-600 font-semibold">
-            Category: <span className="text-gray-800">{product.category}</span>
+            Category: <span className="text-gray-800">{product.brand.name}</span>
           </p>
 
           <p className="text-gray-700 text-md leading-relaxed">{product.description}</p>
@@ -76,8 +84,17 @@ const ProductDetails = () => {
             <p><strong>Price:</strong> ${product.price}</p>
           </div>
 
-          <p className={`text-sm font-medium ${product.stock ? 'text-green-600' : 'text-red-500'}`}>
-            {product.stock ? "In Stock" : "Out of Stock"}
+          <p
+            className={`text-sm font-medium ${
+              product.stock >= 15 ? "text-green-600" : "text-red-500"
+            }`}
+          >
+            Stock:{" "}
+            {product.stock >= 10
+              ? product.stock
+              : product.stock > 0
+              ? `Only ${product.stock} left`
+              : "Out of Stock"}
           </p>
 
           <button

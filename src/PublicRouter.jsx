@@ -5,9 +5,9 @@ const PublicRouter = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (user) {
-    if (user.role === "Admin") {
+    if (user.role === "admin") {
       return <Navigate to="/admin" />;
-    } else if (user.role === "User") {
+    } else if (user.role === "user") {
       return <Navigate to="/" />;
     }
   }

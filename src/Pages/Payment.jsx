@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 
 function Payment() {
   const navigate = useNavigate();
-  const { cartItems } = useCart();
+  const { cartItems } = useCart()
 
   useEffect(() => {
     if (!cartItems || cartItems.length === 0) {
@@ -13,9 +13,10 @@ function Payment() {
   }, [cartItems]);
 
   const totalPrice = cartItems.reduce(
-    (sum, item) => sum + item.price * item.qty,
+    (sum, item) => sum + item.product.price * item.qty,
     0
   );
+  
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -194,7 +195,7 @@ function Payment() {
 
         <div className="pt-6 border-t mt-4 flex flex-col sm:flex-row sm:justify-between items-center">
           <p className="text-lg font-semibold mb-4 sm:mb-0">
-            Total Amount: <span className="text-green-600">${totalPrice.toFixed(2)}</span>
+            Total Amount: <span className="text-green-600">₹{totalPrice.toFixed(2)}</span>
           </p>
           <button
             type="submit"

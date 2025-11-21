@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { URL } from "../apiEndpoint";
+
+import api from "../API/axios";
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${URL}/users`).then((res) => {
+    api.get(`admin/manage/users`).then((res) => {
       setUsers(res.data || []);
     });
   }, []);
 
   const toggleBlockStatus = async (id, currentStatus) => {
     try {
-      await axios.patch(`${URL}/users/${id}`, {
+      await api.patch(`admin/manage/users/${id}/`, {
         isBlock: !currentStatus,
       });
 
@@ -30,9 +31,9 @@ function ManageUsers() {
   };
 
   const toggleAdminStatus = async (id, currentRole) => {
-    const newRole = currentRole === "Admin" ? "User" : "Admin";
+    const newRole = currentRole === "admin" ? "user" : "admin";
     try {
-      await axios.patch(`${URL}/users/${id}`, {
+      await api.patch(`admin/manage/users/${id}/`, {
         role: newRole,
       });
 
@@ -89,7 +90,7 @@ function ManageUsers() {
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
                             <span className="text-indigo-600 font-medium">
-                              {user.name.charAt(0).toUpperCase()}
+                              {user.username.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div className="ml-4">
@@ -101,7 +102,7 @@ function ManageUsers() {
                       <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                       <td className="px-8 py-5 whitespace-nowrap">
                         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          user.role === "Admin" ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                          user.role === "admin" ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                         }`}>
                           {user.role}
                         </span>
@@ -151,12 +152,12 @@ function ManageUsers() {
                         <button
                           onClick={() => toggleAdminStatus(user.id, user.role)}
                           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            user.role === "Admin" 
+                            user.role === "admin" 
                               ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700 hover:text-yellow-800' 
                               : 'bg-blue-100 hover:bg-blue-200 text-blue-700 hover:text-blue-800'
                           } shadow-sm hover:shadow-md`}
                         >
-                          {user.role === "Admin" ? (
+                          {user.role === "admin" ? (
                             <span className="flex items-center">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z" />

@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+
 import { FaHeart, FaShoppingCart, FaUserCircle } from "react-icons/fa";
+import { useUser } from "../context/UserContext";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { cartItems, user, setUser } = useCart();
-  const totalQty = cartItems.reduce((acc, item) => acc + item.qty, 0);
+  const { cartItems, totalQty } = useCart();
+  const { user, loadingUser, logout } = useUser()
+
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef();
 
@@ -20,9 +23,16 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+  const handleCartClick = () => {
+    if (loadingUser) return;
+     console.log(user)
+    if (!user) navigate("/login");
+      
+    else navigate("/cart");
+  };
+
+  const handleLogoutClick = async () => {
+    await logout();
     navigate("/");
   };
 
@@ -46,7 +56,7 @@ function Navbar() {
 
         <div
           className="relative hover:text-green-600 transition-transform duration-200 hover:scale-110 cursor-pointer"
-          onClick={() => navigate("/cart")}
+          onClick={handleCartClick}
           title="Cart"
         >
           <FaShoppingCart />
@@ -63,9 +73,7 @@ function Navbar() {
             onClick={() => navigate("/login")}
             title="Login"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="w-5 h-5" viewBox="0 0 16 16">
-              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 100-6 3 3 0 000 6z" />
-            </svg>
+            <FaUserCircle size={24} />
           </div>
         ) : (
           <div className="relative flex items-center gap-2 text-black cursor-pointer" ref={dropdownRef}>
@@ -75,11 +83,8 @@ function Navbar() {
               onClick={() => setShowDropdown(!showDropdown)}
               title="User Menu"
             />
-            <span
-              onClick={() => setShowDropdown(!showDropdown)}
-              className="text-sm font-semibold hidden sm:inline"
-            >
-              Hi, {user.name.split(" ")[0]}
+            <span onClick={() => setShowDropdown(!showDropdown)} className="text-sm font-semibold hidden sm:inline">
+              Hi, {user?.name ? user.name.split(" ")[0] : "User"}
             </span>
             {showDropdown && (
               <div className="absolute top-8 right-0 bg-white border rounded-md shadow-md py-2 w-32 z-50">
@@ -94,7 +99,7 @@ function Navbar() {
                 </button>
                 <button
                   className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                  onClick={handleLogout}
+                  onClick={handleLogoutClick}
                 >
                   Logout
                 </button>

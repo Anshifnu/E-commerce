@@ -31,11 +31,12 @@ function Home() {
   const user = localStorage.getItem("user")
   const navigate=useNavigate()
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.role === "Admin") {
-      navigate("/admin", { replace: true });
-    }
-  }, []);
+  if (user && user.role === "admin") {
+    navigate("/admin", { replace: true });
+  }
+}, []);
+
+  
   return (
     <div className="min-h-screen flex flex-col">
          

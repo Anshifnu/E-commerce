@@ -1,5 +1,6 @@
 import Router from './Router.jsx'
 import { CartProvider } from './context/CartContext.jsx'
+import {UserProvider} from './context/UserContext.jsx'
 
 
 
@@ -7,9 +8,11 @@ function App() {
   
 
   return (
-   <CartProvider>
+    <UserProvider>
+    <CartProvider>
       <Router />
     </CartProvider>
+    </UserProvider>
   )
 }
 

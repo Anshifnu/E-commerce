@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Search, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { URL } from "../apiEndpoint";
+import api from "../API/axios";
+
 
 function ManageOrders() {
   const [users, setUsers] = useState([]);
@@ -11,53 +11,51 @@ function ManageOrders() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${URL}/users`).then((res) => {
+    api.get(`admin/manage/orders/`).then((res) => {
       const userData = res.data || [];
       setUsers(userData);
 
-      const allOrders = userData
-        .filter((u) => u.role === "User")
-        .flatMap((user) =>
-          (user.orders || []).flatMap((order, orderIndex) =>
-            (order.items || []).map((item, itemIndex) => ({
-              ...item,
-              userName: user.name,
-              userEmail: user.email,
-              orderId: `${user.id}-${orderIndex}-${itemIndex}`,
-              userId: user.id,
-              orderIndex,
-              status: order.status || "pending",
-            }))
-          )
-        );
+const allOrders = userData
+  .filter(u => u.role === 'user')
+  .flatMap(user =>
+    (user.orders || []).flatMap((order, orderIndex) =>
+      (order.items || []).map((item, itemIndex) => ({
+        backendOrderId: order.id, // <-- add this
+        id: item.id,
+        name: item.product.name,
+        qty: item.qty,
+        price: item.price,
+        userName: user.username,   // use username, not name
+        userEmail: user.email,
+        orderId: `${user.id}-${orderIndex}-${itemIndex}`,
+        userId: user.id,
+        orderIndex,
+        status: order.status || "pending"
+      }))
+    )
+  );
 
-      setOrders(allOrders);
+setOrders(allOrders);
+
     });
   }, []);
 
-  const handleStatusChange = (order, newStatus) => {
-    axios.get(`${URL}/users/${order.userId}`).then((res) => {
-      const user = res.data;
-      const updatedOrders = [...user.orders];
 
-      if (updatedOrders[order.orderIndex]) {
-        updatedOrders[order.orderIndex].status = newStatus;
+const handleStatusChange = (order, newStatus) => {
+  api
+    .patch(`admin/manage/orders/${order.backendOrderId}/`, { status: newStatus })
+    .then(() => {
+      setOrders((prevOrders) =>
+        prevOrders.map((o) =>
+          o.orderId === order.orderId ? { ...o, status: newStatus } : o
+        )
+      );
+    })
+    .catch((err) => console.error("Error updating order status:", err));
+};
 
-        axios
-          .patch(`${URL}/users/${order.userId}`, {
-            orders: updatedOrders,
-          })
-          .then(() => {
-            setOrders((prevOrders) =>
-              prevOrders.map((o) =>
-                o.orderId === order.orderId ? { ...o, status: newStatus } : o
-              )
-            );
-          })
-          .catch((err) => console.error("Error updating order status:", err));
-      }
-    });
-  };
+
+   
 
   const filteredOrders = orders.filter((order) => {
     const term = searchTerm.toLowerCase();
@@ -139,22 +137,35 @@ function ManageOrders() {
                         ${order.qty * order.price}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order, e.target.value)}
-                          className={`block w-full pl-3 pr-8 py-2 text-base border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 capitalize ${
-                            order.status === 'pending' ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
-                            order.status === 'processing' ? 'bg-blue-50 border-blue-200 text-blue-700' :
-                            order.status === 'shipped' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' :
-                            'bg-green-50 border-green-200 text-green-700'
-                          }`}
-                        >
-                          <option value="pending" className="bg-white">Pending</option>
-                          <option value="processing" className="bg-white">Processing</option>
-                          <option value="shipped" className="bg-white">Shipped</option>
-                          <option value="Delivered" className="bg-white">Delivered</option>
-                        </select>
-                      </td>
+ {order.status.toLowerCase() === "cancelled" ? (
+  <span className="block w-full px-3 py-2 text-base border rounded-lg shadow-sm bg-red-50 border-red-200 text-red-700 capitalize text-center">
+    Cancelled
+  </span>
+) : (
+  <select
+  value={order.status.toLowerCase()}  // convert to lowercase to match backend
+  onChange={(e) => handleStatusChange(order, e.target.value)}
+  className={`block w-full pl-3 pr-8 py-2 text-base border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 capitalize ${
+    order.status.toLowerCase() === "pending"
+      ? "bg-yellow-50 border-yellow-200 text-yellow-700"
+      : order.status.toLowerCase() === "processing"
+      ? "bg-blue-50 border-blue-200 text-blue-700"
+      : order.status.toLowerCase() === "shipped"
+      ? "bg-indigo-50 border-indigo-200 text-indigo-700"
+      : "bg-green-50 border-green-200 text-green-700"
+  }`}
+>
+  <option value="pending">Pending</option>
+  <option value="processing">Processing</option>
+  <option value="shipped">Shipped</option>
+  <option value="delivered">Delivered</option>
+</select>
+
+)}
+  
+</td>
+
+                      
                     </tr>
                   ))}
                 </tbody>

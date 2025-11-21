@@ -22,6 +22,8 @@ import ManageOrders from "./Admin/ManageOrders.jsx";
 import AdminRouter from "./AdminRouter.jsx";
 import PublicRouter from "./PublicRouter.jsx";
 import NotFound from "./NotFound.jsx";
+import ResetPassword from "./Pages/ResetPassword.jsx";
+import ForgotPassword from "./Pages/ForgotPassword.jsx";
 
 function AppRoutes() {
   const location = useLocation();
@@ -36,7 +38,9 @@ function AppRoutes() {
       "/confirm",
       "/ManageUsers",
       "/ManageProducts",
-      "/ManageOrders"
+      "/ManageOrders",
+      "/resetpassword",
+      "/forgetpassword"
     ];
 
     const matchedRoutes = matchRoutes([
@@ -54,6 +58,8 @@ function AppRoutes() {
       { path: "/ManageUsers" },
       { path: "/ManageProducts" },
       { path: "/ManageOrders" },
+      {path:"/resetpassword"},
+      {path:"/forgetpassword"},
     ], location);
 
     const is404 = !matchedRoutes;
@@ -78,6 +84,10 @@ function AppRoutes() {
         <Route element={<PublicRouter />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
+          <Route path="/forgetpassword" element={<ForgotPassword />}/>
+          
+          <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
+
         </Route>
 
         <Route element={<ProtectedRoute />}>
@@ -86,6 +96,7 @@ function AppRoutes() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/confirm" element={<Confirm />} />
           <Route path="/orders" element={<Orders />} />
+
         </Route>
 
         <Route element={<AdminRouter />}>
