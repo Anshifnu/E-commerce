@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import api from "../API/axios";
+
 
 function Payment() {
   const navigate = useNavigate();
   const { cartItems } = useCart()
+  const [paymentMethod, setPaymentMethod] = useState("card");
 
   useEffect(() => {
     if (!cartItems || cartItems.length === 0) {
@@ -16,6 +19,14 @@ function Payment() {
     (sum, item) => sum + item.product.price * item.qty,
     0
   );
+
+  useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+}, []);
+
   
 
   const [formData, setFormData] = useState({
@@ -100,47 +111,118 @@ function Payment() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const newErrors = {};
-    for (const key in formData) {
-      if (!formData[key].trim()) {
-        newErrors[key] = `${key} is required`;
-      } else {
-        const specificError = validateCardFields(key, formData[key]);
-        if (specificError) {
-          newErrors[key] = specificError;
-        }
-      }
+  // ✅ Validate shipping fields only
+  const shippingFields = ["fullName", "address", "city", "postalCode", "country"];
+  const newErrors = {};
+
+  shippingFields.forEach((field) => {
+    if (!formData[field].trim()) {
+      newErrors[field] = `${field} is required`;
     }
+  });
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+  // ❌ Stop if shipping invalid
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
 
-    const shippingInfo = {
-      fullName: formData.fullName,
-      address: formData.address,
-      city: formData.city,
-      postalCode: formData.postalCode,
-      country: formData.country,
-    };
+  // ✅ Razorpay flow
+  if (paymentMethod === "razorpay") {
+    handleRazorpayPayment();
+    return;
+  }
 
-    const paymentInfo = {
-      cardNumber: formData.cardNumber,
-      expiry: formData.expiry,
-      cvv: formData.cvv,
-    };
+  // ✅ Card validation ONLY for card payment
+  ["cardNumber", "expiry", "cvv"].forEach((field) => {
+    const error = validateCardFields(field, formData[field]);
+    if (error) newErrors[field] = error;
+  });
 
-    navigate("/confirm", {
-      state: {
-        shippingInfo,
-        paymentInfo,
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  navigate("/confirm", {
+    state: {
+      shippingInfo: {
+        fullName: formData.fullName,
+        address: formData.address,
+        city: formData.city,
+        postalCode: formData.postalCode,
+        country: formData.country,
       },
-      replace: true,
+     paymentInfo: {
+  method: "card",
+  cardNumber: formData.cardNumber,
+  expiry: formData.expiry,
+  cvv: formData.cvv
+},
+    },
+    replace: true,
+  });
+};
+
+ const handleRazorpayPayment = async () => {
+  try {
+    // 1️⃣ Create razorpay order (backend)
+    const res = await api.post("create/", {
+      amount: totalPrice,
     });
-  };
+
+    const { order_id, amount, currency } = res.data;
+
+    // 2️⃣ Open Razorpay checkout
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY,
+      amount,
+      currency,
+      name: "My Ecommerce Store",
+      description: "Order Payment",
+      order_id,
+
+      handler: async function (response) {
+        // 3️⃣ Verify payment
+        await api.post("verify/", {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+        });
+
+        // 4️⃣ Go to confirm page
+        navigate("/confirm", {
+          state: {
+            shippingInfo: {
+              fullName: formData.fullName,
+              address: formData.address,
+              city: formData.city,
+              postalCode: formData.postalCode,
+              country: formData.country,
+            },
+            paymentInfo: {
+              method: "razorpay",
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+            },
+          },
+          replace: true,
+        });
+      },
+
+      theme: { color: "#2563eb" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (error) {
+    console.error("Razorpay error:", error);
+    alert("Payment failed. Try again.");
+  }
+};
+
 
   // JSX content remains unchanged
   return (
@@ -174,24 +256,61 @@ function Payment() {
         </div>
 
         {/* Payment Fields */}
-        <div>
-          <h3 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Payment Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {["cardNumber", "expiry", "cvv"].map((field) => (
-              <div key={field}>
-                <input
-                  type="text"
-                  name={field}
-                  placeholder={field === "cvv" ? "CVV" : field === "expiry" ? "MM/YY" : "Card Number"}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
-              </div>
-            ))}
-          </div>
+        {/* Payment Method */}
+<div>
+  <h3 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">
+    Payment Method
+  </h3>
+
+  <div className="flex gap-6 mb-6">
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="radio"
+        value="card"
+        checked={paymentMethod === "card"}
+        onChange={() => setPaymentMethod("card")}
+      />
+      <span>Card Payment</span>
+    </label>
+
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="radio"
+        value="razorpay"
+        checked={paymentMethod === "razorpay"}
+        onChange={() => setPaymentMethod("razorpay")}
+      />
+      <span>Razorpay (UPI / Wallet / Card)</span>
+    </label>
+  </div>
+
+  {paymentMethod === "card" && (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {["cardNumber", "expiry", "cvv"].map((field) => (
+        <div key={field}>
+          <input
+            type="text"
+            name={field}
+            placeholder={
+              field === "cvv"
+                ? "CVV"
+                : field === "expiry"
+                ? "MM/YY"
+                : "Card Number"
+            }
+            value={formData[field]}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          {errors[field] && (
+            <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+          )}
         </div>
+      ))}
+    </div>
+  )}
+</div>
+
 
         <div className="pt-6 border-t mt-4 flex flex-col sm:flex-row sm:justify-between items-center">
           <p className="text-lg font-semibold mb-4 sm:mb-0">

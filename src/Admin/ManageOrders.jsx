@@ -11,7 +11,11 @@ function ManageOrders() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get(`admin/manage/orders/`).then((res) => {
+     api
+    .get(`admin/manage/orders/`, {
+      params: { search: searchTerm }, // 🔹 send search
+    })
+    .then((res) => {
       const userData = res.data || [];
       setUsers(userData);
 
@@ -20,7 +24,7 @@ const allOrders = userData
   .flatMap(user =>
     (user.orders || []).flatMap((order, orderIndex) =>
       (order.items || []).map((item, itemIndex) => ({
-        backendOrderId: order.id, // <-- add this
+        backendOrderId: order.id, 
         id: item.id,
         name: item.product.name,
         qty: item.qty,
@@ -38,7 +42,7 @@ const allOrders = userData
 setOrders(allOrders);
 
     });
-  }, []);
+  }, [searchTerm]);
 
 
 const handleStatusChange = (order, newStatus) => {

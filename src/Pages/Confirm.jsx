@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import api from "../API/axios";
+import { useRef } from "react";
 
 
 function Confirm() {
@@ -10,6 +11,7 @@ function Confirm() {
   const { shippingInfo, paymentInfo } = location.state || {};
   const { cartItems, setCartItems } = useCart();
   const [status, setStatus] = useState("confirming");
+  const hasSubmitted = useRef(false);
 
   useEffect(() => {
     // ✅ Redirect if info missing
@@ -18,60 +20,56 @@ function Confirm() {
       return;
     }
 
-    const confirmOrder = async () => {
-      try {
-        // ✅ Prepare order data
-        const orderData = {
-          shipping_info: {
-            full_name: shippingInfo.fullName,
-            address: shippingInfo.address,
-            city: shippingInfo.city,
-            postal_code: shippingInfo.postalCode,
-            country: shippingInfo.country,
-          },
-          payment_info: {
-            card_number: paymentInfo.cardNumber,
-            expiry: paymentInfo.expiry,
-            cvv: paymentInfo.cvv,
-          },
-          items: cartItems.map((item) => ({
-            product_id: item.product.id,
-            qty: item.qty,
-            price: item.product.price,
-          })),
-        };
+      if (hasSubmitted.current) return;
+  hasSubmitted.current = true;
 
-        // ✅ Create order
-        const res = await api.post("orders/", orderData, { withCredentials: true });
-        console.log("✅ Order created:", res.data);
+const confirmOrder = async () => {
+  try {
+const orderData = {
+  shipping_info: {
+    full_name: shippingInfo.fullName,
+    address: shippingInfo.address,
+    city: shippingInfo.city,
+    postal_code: shippingInfo.postalCode,
+    country: shippingInfo.country,
+  },
+  payment_method: paymentInfo?.method.toLowerCase(), // always lowercase!
+  ...(paymentInfo?.method === "card" && {
+    payment_info: {
+      card_number: paymentInfo.cardNumber,
+      expiry: paymentInfo.expiry,
+      cvv: paymentInfo.cvv,
+    }
+  }),
+  razorpay_payment_id: paymentInfo?.razorpay_payment_id || null,
+  items: cartItems.map((item) => ({
+    product_id: item.product.id,
+    qty: item.qty,
+    price: item.product.price,
+  })),
+};
 
-        // ✅ Clear backend cart
-        try {
-          await api.delete("clear/cart/", { withCredentials: true });
-          console.log("🧹 Cart cleared on backend");
-        } catch (clearErr) {
-          console.error("❌ Failed to clear backend cart:", clearErr);
-        }
 
-        // ✅ Clear frontend cart state
-        if (typeof setCartItems === "function") {
-          setCartItems([]);
-        } else {
-          console.warn("⚠️ setCartItems is not a function — check CartContext.");
-        }
+    const res = await api.post("orders/", orderData, { withCredentials: true });
+    console.log("✅ Order created:", res.data);
 
-        setStatus("success");
+    // Clear backend cart
+    await api.delete("clear/cart/", { withCredentials: true });
+    if (setCartItems) setCartItems([]);
 
-        // ✅ Redirect to orders after 2s
-        setTimeout(() => navigate("/orders", { replace: true }), 2000);
-      } catch (error) {
-        console.error("❌ Error confirming order:", error.response?.data || error.message);
-        setStatus("error");
-      }
-    };
+    setStatus("success");
+    setTimeout(() => navigate("/orders", { replace: true }), 2000);
+  } catch (error) {
+    console.error("❌ Error confirming order:", error.response?.data || error.message);
+    setStatus("error");
+  }
+};
+
 
     confirmOrder();
   }, [shippingInfo, paymentInfo, cartItems, navigate, setCartItems]);
+
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

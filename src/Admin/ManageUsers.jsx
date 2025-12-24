@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import api from "../API/axios";
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
+  
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    api.get(`admin/manage/users`).then((res) => {
+ useEffect(() => {
+  api
+    .get(`admin/manage/users/`, {
+      params: { search },   // 🔹 send query param
+    })
+    .then((res) => {
       setUsers(res.data || []);
     });
-  }, []);
+}, [search]); // 🔹 dependency
+
 
   const toggleBlockStatus = async (id, currentStatus) => {
     try {
@@ -66,6 +72,15 @@ function ManageUsers() {
             Back to Dashboard
           </button>
         </div>
+        <div className="mb-6">
+  <input
+    type="text"
+    placeholder="Search by name, username or email..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="w-full md:w-96 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
+  />
+</div>
 
         {/* User Table */}
         {users.length > 0 ? (
@@ -94,7 +109,7 @@ function ManageUsers() {
                             </span>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                            <div className="text-sm font-medium text-gray-900">{user.username}</div>
                             <div className="text-sm text-gray-500">Joined {new Date().toLocaleDateString()}</div>
                           </div>
                         </div>
